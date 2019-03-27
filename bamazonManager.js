@@ -34,19 +34,16 @@ connection.connect(function (error) {
                 }
                 if (answer.start === 'View Products for Sale') {
                     console.log('View')
-
                     connection.query('SELECT * FROM products', function (error, res) {
                         if (error) {
                             console.error(error);
                         }
                         console.table(res);
-
                     })
                     start();
                 }
                 if (answer.start === 'View Low Inventory') {
                     console.log('Low')
-
                     connection.query('SELECT * FROM products WHERE stock_quantity <= 5', function (error, res) {
                         if (error) {
                             console.error(error);
@@ -57,7 +54,6 @@ connection.connect(function (error) {
                 }
                 if (answer.start === 'Add to Inventory') {
                     console.log('Add')
-
                     inquirer
                         .prompt({
                             name: 'start',
@@ -65,21 +61,18 @@ connection.connect(function (error) {
                             message: 'Type in the ID number of the product to update',
                         }).then(function (answer) {
                             inquirer.prompt({
-
                                 name: 'number',
                                 type: 'input',
                                 message: 'What is the new stock quantity for this product?'
                             }).then(function (res) {
                                 var id = answer.start;
                                 var quant = res.number;
-
                                 connection.query("UPDATE products SET stock_quantity= " + quant + " WHERE item_id= " + id, function (error, res) {
                                     if (error) {
                                         console.error(error);
                                     }
                                     // console.table(res)
                                 })
-
                                 connection.query('SELECT * FROM products', function (error, res) {
                                     if (error) {
                                         console.error(error);
@@ -89,7 +82,6 @@ connection.connect(function (error) {
                                 start();
                             })
                         })
-
                 }
                 if (answer.start === 'Add New Product') {
                     console.log('New')
@@ -117,12 +109,10 @@ connection.connect(function (error) {
                                     message: 'What is the quantity of the new product on hand?'
                                 }).then(function (res) {
                                     var quant = res.quant
-
                                     connection.query("INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES('"  + name + "', '" + dept + "', '" + price + "', '" + quant + "')", function (error, response) {
                                         if (error) {
                                             console.error(error)
                                         }
-
                                         connection.query('SELECT * FROM products', function (error, res) {
                                             if (error) {
                                                 console.error(error);
@@ -130,31 +120,13 @@ connection.connect(function (error) {
                                             console.table(res);
                                             start();
                                         })
-
-
                                     })
-
-
-
-
-
                                 })
-
-
                             })
-
                         })
-
                     })
-
-
-
-
-
-
                     // start();
                 }
-
             })
     }
     start();

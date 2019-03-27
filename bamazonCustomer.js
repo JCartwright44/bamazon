@@ -44,14 +44,12 @@ connection.connect(function (error) {
                             type: 'input',
                             message: 'Please enter the Product ID of the product you would like to purchase.',
                         }).then(function (answer) {
-
                             inquirer
                                 .prompt({
                                     name: 'quantity',
                                     type: 'input',
                                     message: 'What is the quantity you would like to purchase?'
                                 }).then(function (response) {
-
                                     var quantity = parseFloat(response.quantity);
                                     connection.query('SELECT * FROM products WHERE ?', {
                                             item_id: answer.productID
@@ -60,7 +58,9 @@ connection.connect(function (error) {
                                             if (error) {
                                                 console.error(error);
                                             }
-                                            var stock = res[0].stock_quantity;
+                                            var stock = parseFloat(res[0].stock_quantity);
+                                            var price = parseFloat(res[0].price);
+                                            var sales = parseFloat(res[0].product_sales);
                                             console.log('stock: ' + stock);
                                             if (quantity > stock) {
                                                 console.log('Insufficient quantity! Please start again');
@@ -68,9 +68,15 @@ connection.connect(function (error) {
                                             } else {
                                                 console.log('Thank you for your purchase of ' + quantity + ' ' + res[0].product_name);
                                                 var newStock = stock - quantity;
-                                                connection.query('UPDATE products SET ? WHERE ?',
+                                                var thisSale = price * quantity;
+                                                var newSales = sales + thisSale;
+                                                console.log(newSales);
+                                                connection.query('UPDATE products SET ?, ? WHERE ?',
                                                     [{
                                                             stock_quantity: newStock
+                                                        },
+                                                        {
+                                                            product_sales: newSales
                                                         },
                                                         {
                                                             item_id: answer.productID
@@ -86,9 +92,23 @@ connection.connect(function (error) {
                                                                 console.error(error);
                                                             }
                                                             console.table(res);
-                                                    
-                                                        })
-                                                    
+                                                        });
+
+                                                        // connection.query("INSERT INTO departments ('department_id', department_name, overhead_costs) VALUES ?, ?, ?",
+                                                        // [{
+                                                        //     department_id: 
+                                                        //     },
+                                                        //     {
+                                                        //         department_name: 
+                                                        //     },
+                                                        //     {
+                                                        //         overhead_costs: answer.
+                                                        //     }
+                                                        // ],
+                                                        // function (error, res) {
+                                                        //     if (error) {
+                                                        //         console.error(error);
+                                                        //     }
                                                         inquirer
                                                             .prompt({
                                                                 name: 'another',
@@ -102,20 +122,15 @@ connection.connect(function (error) {
                                                                     console.log('Goodbye')
                                                                     connection.end();
                                                                 }
-
                                                             })
                                                     }
                                                 )
                                             }
                                         })
-
                                 })
                         })
-
                 }
             })
     }
-
     start()
-
 })
